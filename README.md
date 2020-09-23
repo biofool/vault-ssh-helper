@@ -1,202 +1,131 @@
-vault-ssh-helper[![Build Status](https://travis-ci.org/hashicorp/vault-ssh-helper.svg)](https://travis-ci.org/hashicorp/vault-ssh-helper)
-===============
 
-**Please note**: We take Vault's security and our users' trust very seriously. If you believe you have found a security issue in Vault, _please responsibly disclose_ by contacting us at [security@hashicorp.com](mailto:security@hashicorp.com).
+First of all lets spin up a container and name it vault so that we can reuse it later on:
 
-----
+docker run --rm -ti --name vault centos:7
 
-`vault-ssh-helper` is a counterpart to [HashiCorp
-Vault's](https://github.com/hashicorp/vault) SSH backend. It allows a machine
-to consume One-Time-Passwords (OTP) created by Vault servers by allowing them
-to be used as client authentication credentials at SSH connection time.
+We can now install some required dependencies and then Vault itself:
 
-All of the remote hosts that belong to the SSH backend's OTP-type roles will
-need this helper installed. In addition, each host must have its SSH
-configuration changed to enable keyboard-interactive authentication and
-redirect its client authentication responsibility to `vault-ssh-helper`.
+sudo apt install python-certbot-apache
+sudo apt install fail2ban links2
+sudo apt install golang gox
+sudo apt install sshpass
 
-Vault-authenticated users contact the Vault server and retrieve an OTP issued
-for a specific username and IP address. While establishing an SSH connection to
-the host, the `vault-ssh-helper` binary reads the OTP from the password prompt
-and sends it to the Vault server for verification. Client authentication is
-successful (and the SSH connection allowed) only if the Vault server verifies
-the OTP. True to its name, once the OTP has been used a single time for
-authentication, it is removed from Vault and cannot be used again.
+export VAULT_VERSION=1.5.3
+curl -LO https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
 
-`vault-ssh-helper` is not a PAM module, but it does the job of one.
-`vault-ssh-helper`'s binary is run as an external command using `pam_exec.so`
-with access to the entered password (in this case, the issued OTP). Successful
-execution and exit of this command is a PAM 'requisite' for authentication to
-be successful. If the OTP is not validated, the binary exits with a non-zero
-status and authentication fails.
+curl -LO https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_SHA256SUMS
+grep "vault_${VAULT_VERSION}_linux_amd64.zip" vault_${VAULT_VERSION}_SHA256SUMS | sha256sum -c -
 
-PAM modules are generally shared object files; rather than writing and
-maintaining a PAM module in C, `vault-ssh-helper` is written in Go and invoked
-as an external binary. This allows `vault-ssh-helper` to be contained within
-one code base with known, testable behavior. It also allows other
-authentication systems that are not PAM-based to invoke `vault-ssh-helper` and
-take advantage of its capabilities.
+unzip -q vault_${VAULT_VERSION}_linux_amd64.zip
+cp vault /usr/local/bin/
 
-## Usage
------
-`vault-ssh-helper [options]`
+We can now configure and launch Vault using some development settings:
 
-### Options
-|Option       |Description|
-|-------------|-----------|
-|`verify-only`|Verifies that `vault-ssh-helper` is installed correctly and is able to communicate with Vault.
-|`config`     |The path to the configuration file. Configuration options are detailed below.
-|`dev`        |`vault-ssh-helper` communicates with Vault with TLS disabled. This is NOT recommended for production use. Use with caution.
+mkdir hvault
+cat > config.hcl <<EOF
+listener "tcp" {
+    address     = "0.0.0.0:8200"
+    tls_disable = true # don't do this in production - always use TLS in prod
+}
 
-## Download vault-ssh-helper
+storage "file" {
+    path = "./hvault"
+}
 
-Download the latest version of `vault-ssh-helper` at [releases.hashicorp.com](https://releases.hashicorp.com/vault-ssh-helper).
+disable_mlock = true # don't do this in production either
+# ^ setting this to true allows leaking of sensitive data to disk/swap
+# we're doing it here to avoid running the process as root
+# or modifying any system tunables
+EOF
 
-## Build and Install
------
+vault server -config=config.hcl
 
-You'll first need Go installed on your machine (version 1.8+ is required).
+This will launch the server in the foreground, so we’ll want to connect to the Docker container in a new terminal:
 
-Install `Go` on your machine and set `GOPATH` accordingly. Clone this
-repository into $GOPATH/src/github.com/hashicorp/vault-ssh-helper. Install all
-of the dependent binaries like `godep`, `gox`, `vet`, etc. by bootstrapping the
-environment:
+docker exec -ti vault /bin/bash
 
-```shell
-$ make updatedeps
-```
+Now we can configure Vault as a client and make sure we have a connection:
 
-Build and install `vault-ssh-helper`:
+export VAULT_ADDR="http://127.0.0.1:8200"
+echo 'export VAULT_ADDR="http://127.0.0.1:8200"' >> ~/.bashrc
+vault status
 
-```shell
-$ make
-$ make install
-```
+Finally, we can initialise Vault to make it ready to use:
 
-Follow the instructions below to modify your SSH server configuration, PAM
-configuration and `vault-ssh-helper` configuration. Check if `vault-ssh-helper`
-is installed and configured correctly and also is able to communicate with
-Vault server properly. Before verifying `vault-ssh-helper`, make sure that the
-Vault server is up and running and it has mounted the SSH backend.  Also, make
-sure that the mount path of the SSH backend is properly updated in
-`vault-ssh-helper`'s config file:
+vault operator init -key-shares=1 -key-threshold=1
 
-```shell
-$ vault-ssh-helper -verify-only -config=<path-to-config-file>
-Using SSH Mount point: ssh
-vault-ssh-helper verification successful!
-```
+# this will give you a vault token and an unseal key.  Use these now:
 
-If you intend to contribute to this project, compile a development version of
-`vault-ssh-helper` using `make dev`. This will put the binary in the `bin` and
-`$GOPATH/bin` folders.
+read -s -p "Initial Root Token: " vault_token
+echo $vault_token > ~/.vault-token
 
-```shell
-$ make dev
-```
+vault operator unseal # provide 'Unseal Key 1:'
 
-If you're developing a specific package, you can run tests for just that
-package by specifying the `TEST` variable. For example below, only `helper`
-package tests will be run.
+vault token lookup
 
-```sh
-$ make test TEST=./helper
-...
-```
+Now we have Vault running, a client connected, and have made sure we have a valid token. The next step is to enable the secrets engine:
 
-If you intend to cross compile the binary, run `make bin`.
+vault secrets enable -path=ssh-client ssh
 
-`vault-ssh-helper` Configuration
--------------------
-**[Note]: This configuration is applicable for Ubuntu 14.04. SSH/PAM
-configurations differ with each platform and distribution.**
+We can then create a role which will allow us to ssh as the root user to any of our SSH servers (any IP address):
 
-`vault-ssh-helper`'s configuration is written in [HashiCorp Configuration
-Language (HCL)](https://github.com/hashicorp/hcl).  By proxy, this means that
-`vault-ssh-helper`'s configuration is JSON-compatible. For more information,
-please see the [HCL Specification](https://github.com/hashicorp/hcl).
+vault write ssh-client/roles/otp_key_role key_type=otp default_user=root cidr_list=0.0.0.0/0
 
-### Properties
-|Property           |Description|
-|-------------------|-----------|
-|`vault_addr`       |[Required] Address of the Vault server.
-|`ssh_mount_point`  |[Required] Mount point of SSH backend in Vault server.
-|`namespace`        |Namespace of the SSH mount. (Vault Enterprise only)
-|`ca_cert`          |Path of a PEM-encoded CA certificate file used to verify the Vault server's TLS certificate. `-dev` mode ignores this value.
-|`ca_path`          |Path to directory of PEM-encoded CA certificate files used to verify the Vault server's TLS certiciate. `-dev` mode ignores this value.
-|`tls_skip_verify`  |Skip TLS certificate verification. Use with caution.
-|`allowed_roles`    |List of comma-separated Vault SSH roles. The OTP verification response from the server will contain the name of the role against which the OTP was issued. Specify which roles are allowed to login using this configuration. Set this to `*` to allow any role to perform a login.
-|`allowed_cidr_list`|List of comma-separated CIDR blocks. If the IP used by the user to connect to the host is different than the address(es) of the host's network interface(s) (for instance, if the address is NAT-ed), then `vault-ssh-helper` cannot authenticate the IP. In these cases, the IP returned by Vault will be matched with the CIDR blocks in this list. If it matches, the authentication succeeds. (Use with caution)
+With that in place, we now need to configure our SSH servers to use the vault-ssh-helper. First of all we need to download and configure the vault-ssh-helper tool itself:
 
-Sample `config.hcl`:
+curl -C - -k https://releases.hashicorp.com/vault-ssh-helper/0.1.4/vault-ssh-helper_0.1.4_linux_amd64.zip -o vault-ssh-helper.zip
+unzip vault-ssh-helper.zip
+mv vault-ssh-helper /usr/local/bin/
 
-```hcl
-vault_addr = "https://vault.example.com:8200"
-ssh_mount_point = "ssh"
-namespace = "my_namespace"
+mkdir /etc/vault-ssh-helper.d
+cat > /etc/vault-ssh-helper.d/config.hcl << EOL
+vault_addr = "http://172.17.0.2:8200"
+ssh_mount_point = "ssh-client"
 ca_cert = "/etc/vault-ssh-helper.d/vault.crt"
 tls_skip_verify = false
 allowed_roles = "*"
-```
+EOL
+vault-ssh-helper -dev -verify-only -config=/etc/vault-ssh-helper.d/config.hcl
 
-PAM Configuration
---------------------------------
-Modify the `/etc/pam.d/sshd` file as follows; each option will be explained
-below.
+Then we need to configure both PAM and SSHD to use vault-ssh-helper:
 
-```
-#@include common-auth
-auth requisite pam_exec.so quiet expose_authtok log=/tmp/vaultssh.log /usr/local/bin/vault-ssh-helper -config=/etc/vault-ssh-helper.d/config.hcl
-auth optional pam_unix.so not_set_pass use_first_pass nodelay
-```
+cat > /etc/pam.d/sshd << EOL
+#%PAM-1.0
+auth        required    pam_sepermit.so
+#auth       substack    password-auth # COMMENT OUT FOR SSH-HELPER
+auth        include     postlogin
+auth        requisite   pam_exec.so quiet expose_authtok log=/var/log/vaultssh.log /usr/local/bin/vault-ssh-helper -dev -config=/etc/vault-ssh-helper.d/config.hcl
+auth        optional    pam_unix.so not_set_pass use_first_pass nodelay
+# Used with polkit to reauthorize users in remote sessions
+-auth       optional    pam_reauthorize.so prepare
+account     required    pam_nologin.so
+account     include     password-auth
+#password   include     password-auth # COMMENT OUT FOR SSH-HELPER
+# pam_selinux.so close should be the first session rule
+session     required    pam_selinux.so close
+session     required    pam_loginuid.so
+# pam_selinux.so open should only be followed by sessions to be executed in the user context
+session     required    pam_selinux.so open env_params
+session     required    pam_namespace.so
+session     optional    pam_keyinit.so force revoke
+session     include     password-auth
+session     include     postlogin
+# Used with polkit to reauthorize users in remote sessions
+-session   optional     pam_reauthorize.so prepare
+EOL
 
-First, the previous authentication mechanism `common-auth`, which is the
-standard Linux authentication module, is commented out, in favor of using our
-custom configuration.
+vi /etc/ssh/sshd_config
+# Set the following three options:
+# ChallengeResponseAuthentication yes
+# PasswordAuthentication no 
+# UsePAM yes
 
-Next the authentication configuration for `vault-ssh-helper` is set.
+And finally, because we are in a container without systemd access, we’ll cheat and run sshd ourselves rather than via systemd:
 
-|Keyword           |Description |
-|------------------|------------|
-|`auth`            |PAM type that the configuration applies to.
-|`requisite`       |If the external command fails, the authentication should fail.
-|`pam_exec.so`     |PAM module that runs an external command (`vault-ssh-helper`).
-|`quiet`           |Suppress the exit status of `vault-ssh-helper` from being displayed.
-|`expose_authtok`  |Binary can read the password from stdin.
-|`log`             |Path to `vault-ssh-helper`'s log file.
-|`vault-ssh-helper`|Absolute path to `vault-ssh-helper`'s binary.
-|`config`          |The path to `vault-ssh-helper`'s config file.
+/usr/sbin/sshd-keygen
+/usr/sbin/sshd -f /etc/ssh/sshd_config
 
-The third line works around a bug between some versions of `pam_exec.so` and
-`vault-ssh-helper` that causes a successful authentication from
-`vault-ssh-helper` to fail due to some resources not being properly released.
-Because it is marked as optional, it is essentially a no-op that ensures that
-PAM cleans up successfully, avoiding the bug.
+We are now fully setup and ready to use ssh with vault. Let’s ask for access to 127.0.0.1, and then ssh in:
 
-|Option           |Description |
-|-----------------|------------|
-|`auth`           |PAM type that the configuration applies to.
-|`optional`       |If the module fails, authentication does not fail (but if the OTP was invalid, we will have already failed previously).
-|`pam_unix.so`    |Linux's standard authentication module.
-|`not_set_pass`   |Module should not be allowed to set or modify passwords.
-|`use_first_pass` |Do not display password prompt again. Use the password from the previous module.
-|`nodelay`        |Avoids the induced delay after entering a wrong password.
-
-SSHD Configuration
---------------------------------
-Modify the `/etc/ssh/sshd_config` file. Note that for many distributions these
-are the default options; you may not need to set them explicitly but should
-verify their values if not.
-
-```
-ChallengeResponseAuthentication yes
-UsePAM yes
-PasswordAuthentication no
-```
-
-|Option                               |Description |
-|-------------------------------------|------------|
-|`ChallengeResponseAuthentication yes`|[Required] Enable challenge response (keyboard-interactive) authentication.
-|`UsePAM yes`                         |[Required] Enable PAM authentication modules.
-|`PasswordAuthentication no`          |Disable password authentication.
-
+vault write ssh-client/creds/otp_key_role ip=127.0.0.1
+vault ssh -role otp_key_role -mode otp -strict-host-key-checking=no -mount-point=ssh-client root@127.0.0.1
