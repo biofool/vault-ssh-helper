@@ -46,8 +46,8 @@ docker exec -ti vault /bin/bash
 
 Now we can configure Vault as a client and make sure we have a connection:
 
-export VAULT_ADDR="http://127.0.0.1:8200"
-echo 'export VAULT_ADDR="http://127.0.0.1:8200"' >> ~/.bashrc
+export VAULT_ADDR="https://54.218.83.33:8200/"
+echo 'export VAULT_ADDR="https://54.218.83.33:8200/"' >> ~/.bashrc
 vault status
 
 Finally, we can initialise Vault to make it ready to use:
