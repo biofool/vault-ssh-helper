@@ -1,6 +1,7 @@
 vault-ssh-helper[![Build Status](https://travis-ci.org/hashicorp/vault-ssh-helper.svg)](https://travis-ci.org/hashicorp/vault-ssh-helper)
 ===============
 
+See also https://github.com/biofool/vault-ssh-helper/blob/dev/Setup.md
 **Please note**: We take Vault's security and our users' trust very seriously. If you believe you have found a security issue in Vault, _please responsibly disclose_ by contacting us at [security@hashicorp.com](mailto:security@hashicorp.com).
 
 ----
