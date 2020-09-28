@@ -1,5 +1,9 @@
 #! dash
 ##  Viarables
+sudo ./newpackages.#!/bin/sh
+sudo ./update-pamd.sh
+
+
 export VAULT_ADDR=https://127.0.0.1:8200/
 export VAULT_ADDR=https://54.218.83.33:8200/
 export VAULT_ADDR=https://vault.secureyourdata.org:8200/
