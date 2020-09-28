@@ -1,4 +1,10 @@
-export VAULT_ADDR=https://127.0.0.1:8200
+#! dash
+##  Viarables
+export VAULT_ADDR=https://127.0.0.1:8200/
+export VAULT_ADDR=https://54.218.83.33:8200/
+export VAULT_ADDR=https://vault.secureyourdata.org:8200/
+
+export GH_ORG=cabw
 vault secrets enable --tls-skip-verify -path=ssh-client ssh
 vault audit --tls-skip-verify enable syslog
 vault audit --tls-skip-verify list
@@ -22,3 +28,5 @@ ssh_mount_point = "ssh"
 allowed_roles = "*"
 EOF
 vault ssh  --tls-skip-verify -role otp_key_role -mode otp test@localhost
+vault auth enable --tls-skip-verify github
+vault write --tls-skip-verify auth/github/config organization=$GH_ORG
