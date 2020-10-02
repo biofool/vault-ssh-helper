@@ -1,10 +1,10 @@
-<mxfile modified="2020-10-02T17:09:57.424Z" host="app.diagrams.net" agent="5.0 (X11)" etag="mhE-XjF0C94vzFYKkP5q" version="13.7.7" type="github">
+<mxfile modified="2020-10-02T17:17:33.068Z" host="app.diagrams.net" agent="5.0 (X11)" etag="_jIqUNMPmckpZgL5tik0" version="13.7.7" type="github">
   <diagram id="Ht1M8jgEwFfnCIfOTk4-" name="Page-1">
-    <mxGraphModel dx="950" dy="484" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="1073" dy="567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="KA_GjHDQiJicOzFnKSso-29" value="Too Many Passwords" style="swimlane;html=1;startSize=20;horizontal=0;childLayout=flowLayout;flowOrientation=west;resizable=0;interRankCellSpacing=50;containerType=tree;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+        <mxCell id="KA_GjHDQiJicOzFnKSso-29" value="" style="swimlane;html=1;startSize=20;horizontal=0;childLayout=flowLayout;flowOrientation=west;resizable=0;interRankCellSpacing=50;containerType=tree;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
           <mxGeometry x="60" y="90" width="460" height="150" as="geometry" />
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-30" value="Developer" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-29">
@@ -64,8 +64,8 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="KA_GjHDQiJicOzFnKSso-40" value="Storing and Auditing" style="swimlane;html=1;startSize=20;horizontal=0;childLayout=flowLayout;flowOrientation=west;resizable=0;interRankCellSpacing=50;containerType=tree;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="530" y="90" width="628" height="263" as="geometry" />
+        <mxCell id="KA_GjHDQiJicOzFnKSso-40" value="" style="swimlane;html=1;startSize=20;horizontal=0;childLayout=flowLayout;flowOrientation=west;resizable=0;interRankCellSpacing=50;containerType=tree;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="585" y="90" width="668" height="283" as="geometry" />
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-41" value="Developer" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-40">
           <mxGeometry x="40" y="90" width="100" height="40" as="geometry" />
@@ -83,10 +83,10 @@
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-47" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;strokeColor=none;" edge="1" parent="KA_GjHDQiJicOzFnKSso-40" source="KA_GjHDQiJicOzFnKSso-42">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="620" y="242.5" as="targetPoint" />
+            <mxPoint x="660" y="262.5" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="582" y="187.5" />
-              <mxPoint x="608" y="242.5" />
+              <mxPoint x="622" y="207.5" />
+              <mxPoint x="648" y="262.5" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -95,8 +95,8 @@
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-50" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="KA_GjHDQiJicOzFnKSso-40" source="KA_GjHDQiJicOzFnKSso-42" target="KA_GjHDQiJicOzFnKSso-49">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="810" y="300" as="sourcePoint" />
-            <mxPoint x="860" y="327.5" as="targetPoint" />
+            <mxPoint x="850" y="320" as="sourcePoint" />
+            <mxPoint x="900" y="347.5" as="targetPoint" />
             <Array as="points">
               <mxPoint x="302" y="100" />
               <mxPoint x="328" y="40" />
@@ -108,8 +108,8 @@
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-52" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="KA_GjHDQiJicOzFnKSso-40" source="KA_GjHDQiJicOzFnKSso-42" target="KA_GjHDQiJicOzFnKSso-51">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="530" y="160" as="sourcePoint" />
-            <mxPoint x="580" y="160" as="targetPoint" />
+            <mxPoint x="570" y="180" as="sourcePoint" />
+            <mxPoint x="620" y="180" as="targetPoint" />
             <Array as="points">
               <mxPoint x="304" y="110" />
               <mxPoint x="328" y="110" />
@@ -121,16 +121,18 @@
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-54" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="KA_GjHDQiJicOzFnKSso-40" source="KA_GjHDQiJicOzFnKSso-42" target="KA_GjHDQiJicOzFnKSso-53">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="490" y="167.5" as="sourcePoint" />
-            <mxPoint x="540" y="140" as="targetPoint" />
+            <mxPoint x="530" y="187.5" as="sourcePoint" />
+            <mxPoint x="580" y="160" as="targetPoint" />
             <Array as="points">
               <mxPoint x="302" y="120" />
               <mxPoint x="328" y="180" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="KA_GjHDQiJicOzFnKSso-58" value="Too Many Passwords" style="swimlane;html=1;startSize=20;horizontal=0;childLayout=flowLayout;flowOrientation=west;resizable=0;interRankCellSpacing=50;containerType=tree;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="60" y="264" width="460" height="430" as="geometry" />
+        <mxCell id="KA_GjHDQiJicOzFnKSso-58" value="" style="swimlane;html=1;startSize=20;horizontal=0;childLayout=flowLayout;flowOrientation=west;resizable=0;interRankCellSpacing=50;containerType=tree;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="264" width="468" height="430" as="geometry">
+            <mxRectangle x="60" y="264" width="30" height="160" as="alternateBounds" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-59" value="Developer" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-58">
           <mxGeometry x="40" y="195" width="100" height="40" as="geometry" />
@@ -181,8 +183,8 @@
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-68" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="KA_GjHDQiJicOzFnKSso-58" source="KA_GjHDQiJicOzFnKSso-60" target="KA_GjHDQiJicOzFnKSso-67">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250" y="520" as="sourcePoint" />
-            <mxPoint x="1300" y="547.5" as="targetPoint" />
+            <mxPoint x="1290" y="540" as="sourcePoint" />
+            <mxPoint x="1340" y="567.5" as="targetPoint" />
             <Array as="points">
               <mxPoint x="302" y="114.16666666666667" />
               <mxPoint x="328" y="40" />
@@ -195,11 +197,11 @@
         <mxCell id="KA_GjHDQiJicOzFnKSso-80" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;strokeColor=none;" edge="1" parent="KA_GjHDQiJicOzFnKSso-58" source="KA_GjHDQiJicOzFnKSso-60">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="382" y="190" />
-              <mxPoint x="408" y="87.5" />
+              <mxPoint x="422" y="210" />
+              <mxPoint x="448" y="107.5" />
             </Array>
-            <mxPoint x="850" y="327.5" as="sourcePoint" />
-            <mxPoint x="420" y="87.5" as="targetPoint" />
+            <mxPoint x="890" y="347.5" as="sourcePoint" />
+            <mxPoint x="460" y="107.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-81" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="KA_GjHDQiJicOzFnKSso-58" source="KA_GjHDQiJicOzFnKSso-59" target="KA_GjHDQiJicOzFnKSso-79">
@@ -208,8 +210,8 @@
               <mxPoint x="152" y="225" />
               <mxPoint x="178" y="302.5" />
             </Array>
-            <mxPoint x="700" y="362.5" as="sourcePoint" />
-            <mxPoint x="750" y="390" as="targetPoint" />
+            <mxPoint x="740" y="382.5" as="sourcePoint" />
+            <mxPoint x="790" y="410" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-82" value="" style="html=1;curved=1;noEdgeStyle=1;orthogonal=1;" edge="1" target="KA_GjHDQiJicOzFnKSso-83" source="KA_GjHDQiJicOzFnKSso-79" parent="KA_GjHDQiJicOzFnKSso-58">
@@ -218,8 +220,8 @@
               <mxPoint x="302" y="302.5" />
               <mxPoint x="328" y="390" />
             </Array>
-            <mxPoint x="720" y="644" as="sourcePoint" />
-            <mxPoint x="750" y="390" as="targetPoint" />
+            <mxPoint x="760" y="664" as="sourcePoint" />
+            <mxPoint x="790" y="410" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-83" value="&lt;div&gt;Instance&lt;/div&gt;Password" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-58">
@@ -231,7 +233,7 @@
               <mxPoint x="304" y="211.25" />
               <mxPoint x="328" y="180" />
             </Array>
-            <mxPoint x="550" y="474" as="sourcePoint" />
+            <mxPoint x="590" y="494" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-91" value="Instance" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-58">
@@ -243,7 +245,7 @@
               <mxPoint x="304" y="218.75" />
               <mxPoint x="328" y="250" />
             </Array>
-            <mxPoint x="510" y="566.5" as="sourcePoint" />
+            <mxPoint x="550" y="586.5" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-93" value="Instance" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-58">
@@ -255,11 +257,17 @@
               <mxPoint x="302" y="226.25" />
               <mxPoint x="328" y="320" />
             </Array>
-            <mxPoint x="470" y="579" as="sourcePoint" />
+            <mxPoint x="510" y="599" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="KA_GjHDQiJicOzFnKSso-95" value="Instance" style="whiteSpace=wrap;html=1;" vertex="1" parent="KA_GjHDQiJicOzFnKSso-58">
           <mxGeometry x="340" y="300" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="KA_GjHDQiJicOzFnKSso-96" value="&lt;font style=&quot;font-size: 22px&quot;&gt;Password Proliferation &lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="30" width="210" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KA_GjHDQiJicOzFnKSso-97" value="&lt;font style=&quot;font-size: 22px&quot;&gt;Long Lived Keys&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="710" y="30" width="210" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
