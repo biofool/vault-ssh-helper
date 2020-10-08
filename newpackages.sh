@@ -1,4 +1,4 @@
-sudo apt install python-certbot-apache
-sudo apt install fail2ban jq
-sudo apt install golang gox
-sudo apt install sshpass
+sudo apt install -y python-certbot-apache
+sudo apt install -y fail2ban jq
+sudo apt install -y golang gox
+sudo apt install -y sshpass
