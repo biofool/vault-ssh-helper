@@ -1,10 +1,14 @@
+# vault-ssh-helper
 
 First of all lets spin up a container and name it vault so that we can reuse it later on:
 
+```bash
 docker run --rm -ti --name vault centos:7
+```
 
 We can now install some required dependencies and then Vault itself:
 
+```bash
 sudo apt install python-certbot-apache
 sudo apt install fail2ban links2
 sudo apt install golang gox
@@ -18,9 +22,11 @@ grep "vault_${VAULT_VERSION}_linux_amd64.zip" vault_${VAULT_VERSION}_SHA256SUMS 
 
 unzip -q vault_${VAULT_VERSION}_linux_amd64.zip
 cp vault /usr/local/bin/
+```
 
 We can now configure and launch Vault using some development settings:
 
+```bash
 mkdir hvault
 cat > config.hcl <<EOF
 listener "tcp" {
@@ -39,22 +45,28 @@ disable_mlock = true # don't do this in production either
 EOF
 
 vault server -config=config.hcl
+```
 
 This will launch the server in the foreground, so we’ll want to connect to the Docker container in a new terminal:
 
+```bash
 docker exec -ti vault /bin/bash
+```
 
 Now we can configure Vault as a client and make sure we have a connection:
 
+```bash
 export VAULT_ADDR="https://54.218.83.33:8200/"
 echo 'export VAULT_ADDR="https://54.218.83.33:8200/"' >> ~/.bashrc
 vault status
+```
 
 Finally, we can initialise Vault to make it ready to use:
 
+```bash
 vault operator init -key-shares=1 -key-threshold=1
 
-# this will give you a vault token and an unseal key.  Use these now:
+# This will give you a vault token and an unseal key.  Use these now:
 
 read -s -p "Initial Root Token: " vault_token
 echo $vault_token > ~/.vault-token
@@ -62,17 +74,23 @@ echo $vault_token > ~/.vault-token
 vault operator unseal # provide 'Unseal Key 1:'
 
 vault token lookup
+```
 
 Now we have Vault running, a client connected, and have made sure we have a valid token. The next step is to enable the secrets engine:
 
+```bash
 vault secrets enable -path=ssh-client ssh
+```
 
 We can then create a role which will allow us to ssh as the root user to any of our SSH servers (any IP address):
 
+```bash
 vault write ssh-client/roles/otp_key_role key_type=otp default_user=root cidr_list=0.0.0.0/0
+```
 
 With that in place, we now need to configure our SSH servers to use the vault-ssh-helper. First of all we need to download and configure the vault-ssh-helper tool itself:
 
+```bash
 curl -C - -k https://releases.hashicorp.com/vault-ssh-helper/0.1.4/vault-ssh-helper_0.1.4_linux_amd64.zip -o vault-ssh-helper.zip
 unzip vault-ssh-helper.zip
 mv vault-ssh-helper /usr/local/bin/
@@ -86,9 +104,11 @@ tls_skip_verify = false
 allowed_roles = "*"
 EOL
 vault-ssh-helper -dev -verify-only -config=/etc/vault-ssh-helper.d/config.hcl
+```
 
 Then we need to configure both PAM and SSHD to use vault-ssh-helper:
 
+```bash
 cat > /etc/pam.d/sshd << EOL
 #%PAM-1.0
 auth        required    pam_sepermit.so
@@ -119,13 +139,19 @@ vi /etc/ssh/sshd_config
 # ChallengeResponseAuthentication yes
 # PasswordAuthentication no 
 # UsePAM yes
+```
+
 
 And finally, because we are in a container without systemd access, we’ll cheat and run sshd ourselves rather than via systemd:
 
+```bash
 /usr/sbin/sshd-keygen
 /usr/sbin/sshd -f /etc/ssh/sshd_config
+```
 
 We are now fully setup and ready to use ssh with vault. Let’s ask for access to 127.0.0.1, and then ssh in:
 
+```bash
 vault write ssh-client/creds/otp_key_role ip=127.0.0.1
 vault ssh -role otp_key_role -mode otp -strict-host-key-checking=no -mount-point=ssh-client root@127.0.0.1
+```
